@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50721
 File Encoding         : 65001
 
-Date: 2018-04-28 16:20:49
+Date: 2018-04-28 16:43:35
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -21,8 +21,8 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `mp_msg`;
 CREATE TABLE `mp_msg` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `to_user_name` varchar(255) NOT NULL,
-  `from_user_name` varchar(255) NOT NULL,
+  `to_user` varchar(255) NOT NULL,
+  `from_user` varchar(255) NOT NULL,
   `msg_type` varchar(255) NOT NULL,
   `msg_id` int(11) NOT NULL,
   `content` varchar(255) DEFAULT NULL,

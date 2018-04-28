@@ -6,6 +6,7 @@ import web
 import time
 import os
 from lxml import etree
+import pymysql
 urls = (
     '/', 'hello',
     '/weixin', 'WeixinInterface'
@@ -43,13 +44,31 @@ class WeixinInterface:
         #web.debug(os.sys.path)
         xml = etree.fromstring(str_xml)#进行XML解析
         content=xml.find("Content").text#获得用户所输入的内容
-        msgType=xml.find("MsgType").text
-        fromUser=xml.find("FromUserName").text
-        toUser=xml.find("ToUserName").text
-        if msgType == 'text':
-            return self.render.reply_text(fromUser,toUser,int(time.time()),"我现在还在开发中，还没有什么功能，您刚才说的是："+content)
+        msg_type=xml.find("MsgType").text
+        msg_id = xml.find("MsgId").text
+        from_user=xml.find("FromUserName").text
+        to_user=xml.find("ToUserName").text
+        self.data_save(from_user, to_user, msg_type, msg_id, content, 0, time.localtime(time.time()))
+        if msg_type == 'text':
+            reply_content = "我现在还在开发中，还没有什么功能，您刚才说的是："+content
+            self.data_save(to_user, from_user, msg_type, msg_id, reply_content, 1, time.localtime(time.time()))
+            return self.render.reply_text(from_user,to_user,int(time.time()),"我现在还在开发中，还没有什么功能，您刚才说的是："+content)
         else:
             pass
+
+    def data_save(self, from_user, to_user, msg_type, msg_id, content, direction, msg_time):
+        db = pymysql.connect("localhost", "root", "Ashin2018", "wechat", charset='utf8')
+        cursor = db.cursor()
+        sql = """INSERT INTO mp_msg
+        (from_user, to_user, msg_type, msg_id, content, direction, msg_time, update_time) 
+        VALUES 
+        ('%s', '%s', '%s', '%s', '%s', '%d', '%s', now())""" % (from_user, to_user, msg_type, msg_id, content, direction, time.strftime("%Y-%m-%d %H:%M:%S", msg_time))
+        try:
+            cursor.execute(sql)
+            db.commit()
+        except:
+            db.rollback()
+        db.close()
 
 application = web.application(urls, globals())
 
