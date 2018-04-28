@@ -57,7 +57,7 @@ class WeixinInterface:
             pass
 
     def data_save(self, from_user, to_user, msg_type, msg_id, content, direction, msg_time):
-        db = pymysql.connect("localhost", "root", "root1234", "wechat", charset='utf8')
+        db = pymysql.connect("45.78.59.214", "root", "root1234", "wechat", charset='utf8')
         cursor = db.cursor()
         sql = """INSERT INTO mp_msg
         (from_user, to_user, msg_type, msg_id, content, direction, msg_time, update_time) 
