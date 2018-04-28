@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 activate_this = '/root/renzx/wechat/py3/bin/activate_this.py'
-#execfile(activate_this, dict(__file__=activate_this))
 exec(open(activate_this).read())
 import hashlib
 import web
 import time
 import os
-import urllib3,json
 from lxml import etree
 urls = (
     '/', 'hello',
