@@ -9,6 +9,7 @@ from lxml import etree
 import pymysql
 import requests
 import json
+import configparser
 urls = (
     '/', 'hello',
     '/weixin', 'WeixinInterface'
@@ -59,7 +60,7 @@ class WeixinInterface:
             pass
 
     def data_save(self, from_user, to_user, msg_type, msg_id, content, direction, msg_time):
-        db = pymysql.connect("45.78.59.214", "root", "root1234", "wechat", charset='utf8')
+        db = self.read_db_config()
         cursor = db.cursor()
         sql = """INSERT INTO mp_msg
         (from_user, to_user, msg_type, msg_id, content, direction, msg_time, update_time) 
@@ -94,5 +95,16 @@ class WeixinInterface:
         req = requests.post(api_url, data=data).text
         replys = json.loads(req)['text']
         return replys
+
+    def read_db_config(self):
+        config = configparser.ConfigParser()
+        config.read('config/mysql.properties')
+
+        ip = config .get('mysql0', "ip")
+        port = config .getint("mysql0", "port")
+        username = config .get("mysql0", "username")
+        password = config .get("mysql0", "password")
+
+        return pymysql.connect(ip, username, password, "wechat", charset='utf8')
 
 application = web.application(urls, globals()).wsgifunc()
