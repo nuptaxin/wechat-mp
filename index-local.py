@@ -7,6 +7,8 @@ import time
 import os
 from lxml import etree
 import pymysql
+import requests
+import json
 urls = (
     '/', 'hello',
     '/weixin', 'WeixinInterface'
@@ -50,9 +52,9 @@ class WeixinInterface:
         to_user=xml.find("ToUserName").text
         self.data_save(from_user, to_user, msg_type, msg_id, content, 0, time.localtime(time.time()))
         if msg_type == 'text':
-            reply_content = "我现在还在开发中，还没有什么功能，您刚才说的是："+content
+            reply_content = self.reply(content)
             self.data_save(to_user, from_user, msg_type, msg_id, reply_content, 1, time.localtime(time.time()))
-            return self.render.reply_text(from_user,to_user,int(time.time()),"我现在还在开发中，还没有什么功能，您刚才说的是："+content)
+            return self.render.reply_text(from_user,to_user,int(time.time()),reply_content)
         else:
             pass
 
@@ -69,6 +71,29 @@ class WeixinInterface:
         except:
             db.rollback()
         db.close()
+
+    def reply(self, content):
+        if content == '?' or content == '？':
+            reply_content = "帮助菜单：\r\n1000-扇贝单词\r\n2000-天气预报"
+        elif content == '1000':
+            reply_content = self.get_shanbay(content)
+        elif content == '2000':
+            reply_content = '天气预报功能开发中，请稍后再试'
+        else:
+            reply_content = self.talks_robot(content)
+        return reply_content
+
+    def get_shanbay(self, content):
+        return '扇贝功能开发中，敬请期待'
+
+    def talks_robot(self, content):
+        api_url = 'http://www.tuling123.com/openapi/api'
+        apikey = '26cb4aee3a1b4035983b80160c0604f9'
+        data = {'key': apikey,
+                'info': content}
+        req = requests.post(api_url, data=data).text
+        replys = json.loads(req)['text']
+        return replys
 
 application = web.application(urls, globals())
 
