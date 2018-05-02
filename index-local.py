@@ -77,7 +77,7 @@ class WeixinInterface:
         if content == '?' or content == '？':
             reply_content = "帮助菜单：\r\n1000-扇贝单词\r\n2000-天气预报"
         elif content == '1000':
-            reply_content = self.get_shanbay(content)
+            reply_content = "帮助-扇贝单词菜单：\r\n1001-绑定扇贝账号\r\n1002-解绑扇贝账号\r\n1003-打卡排行榜\r\n1004-我的打卡\r\n1009-返回上一页"
         elif content == '2000':
             reply_content = '天气预报功能开发中，请稍后再试'
         else:
