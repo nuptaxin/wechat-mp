@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50721
 File Encoding         : 65001
 
-Date: 2018-04-28 16:20:39
+Date: 2018-05-03 17:53:40
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -69,6 +69,7 @@ CREATE TABLE `user_info` (
   `name` varchar(255) NOT NULL,
   `gender` int(11) DEFAULT '0' COMMENT '0-未选择；1-男；2-女',
   `birthday` datetime DEFAULT NULL,
+  `valid` int(1) NOT NULL DEFAULT '1' COMMENT '有效性：1-有效；0-无效',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   `wechat_uid` varchar(255) DEFAULT NULL COMMENT '关联微信用户的uid',
   PRIMARY KEY (`id`)
