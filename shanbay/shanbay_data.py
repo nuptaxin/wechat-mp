@@ -24,8 +24,8 @@ def get_stat(data_date, data_type):
 
     db = pymysql.connect('localhost', 'root', 'Ashin2018', "shanbay", charset='utf8')
     cursor = db.cursor()
-    sql = '''select * from checkin_stat t
-        where t.data_date = '%s' and t.data_type = %d''' % (format_time, data_type)
+    sql = '''select u.name,st.data_date,st.data_type,st.study_time,st.study_word,st.checkin_rate,st.integrity_rate,st.update_time from checkin_stat st, user_info u 
+        where u.uid = st.uid and u.valid =1 and st.data_date='%s' and st.data_type = %d''' % (format_time, data_type)
     print(sql)
     try:
         # 执行SQL语句
@@ -33,17 +33,17 @@ def get_stat(data_date, data_type):
         # 获取所有记录列表
         results = cursor.fetchall()
         for row in results:
-            id = row[0]
-            uid = row[1]
+            name = row[0]
+            data_date = row[1]
             data_type = row[2]
-            data_date = row[3]
-            study_time = row[4]
-            study_word = row[5]
-            checkin_ratio = row[6]
+            study_time = row[3]
+            study_word = row[4]
+            checkin_rate = row[5]
+            integrity_rate = row[6]
             update_time = row[7]
             # 打印结果
-            print("id=%s,uid=%s,data_type=%d,data_date=%s,study_time=%d" % \
-                  (id, uid, data_type, data_date, study_time))
+            print("name=%s,data_date=%s,data_type=%d,study_time=%s,study_word=%d,checkin_rate=%d,integrity_rate=%d,update_time=%s" % \
+                  (name, data_date, data_type, study_time, study_word, checkin_rate,integrity_rate, update_time))
     except:
         print("Error: unable to fetch data")
 
