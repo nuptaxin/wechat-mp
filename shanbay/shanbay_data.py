@@ -17,7 +17,7 @@ def get_stat(data_date, data_type):
         format_time = get_last_monday(data_date).strftime('%Y-%m-%d %H:%M:%S')
     if data_type == 3:
         format_time = data_date.strftime('%Y-%m')+'-1 00:00:00'
-    if data_type == 4:
+    if data_type == 5:
         format_time = data_date.strftime('%Y') + '-1-1 00:00:00'
 
     print(format_time)
@@ -60,4 +60,4 @@ if __name__ == '__main__':
     #get_stat(datetime.date.today(),1)
     #get_stat(datetime.date.today(), 2)
     #get_stat(datetime.date.today(), 3)
-    get_stat(datetime.date.today(), 4)
+    get_stat(datetime.date.today(), 5)
