@@ -10,6 +10,8 @@ import pymysql
 import requests
 import json
 import configparser
+import datetime
+from shanbay.shanbay_data import get_stat
 urls = (
     '/', 'hello',
     '/weixin', 'WeixinInterface'
@@ -78,6 +80,13 @@ class WeixinInterface:
             reply_content = "帮助菜单：\r\n1000-扇贝单词\r\n2000-天气预报"
         elif content == '1000':
             reply_content = "帮助-扇贝单词菜单：\r\n1001-绑定扇贝账号\r\n1002-解绑扇贝账号\r\n1003-打卡排行榜\r\n1004-我的打卡\r\n1009-返回上一页"
+        elif content == '1003':
+            resultList = get_stat(datetime.date.today())
+            reply_content = '名次 姓名 学习时长 学习单词数 打卡率'
+            count =1
+            for r in resultList:
+                reply_content += ' '.join(('\r\n',str(count), r.name,str(r.study_time),str(r.study_word),str(r.checkin_rate)))
+                count +=1
         elif content == '2000':
             reply_content = '天气预报功能开发中，请稍后再试'
         else:

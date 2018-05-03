@@ -10,7 +10,7 @@ import calendar
 import datetime
 import pymysql
 
-def get_stat(data_date, data_type):
+def get_stat(data_date, data_type = 3):
     if data_type == 1:
         format_time = data_date.strftime('%Y-%m-%d %H:%M:%S')
     if data_type == 2:
@@ -32,6 +32,7 @@ def get_stat(data_date, data_type):
         cursor.execute(sql)
         # 获取所有记录列表
         results = cursor.fetchall()
+        resultList = []
         for row in results:
             name = row[0]
             data_date = row[1]
@@ -42,19 +43,32 @@ def get_stat(data_date, data_type):
             integrity_rate = row[6]
             update_time = row[7]
             # 打印结果
+            tuple
             print("name=%s,data_date=%s,data_type=%d,study_time=%s,study_word=%d,checkin_rate=%d,integrity_rate=%d,update_time=%s" % \
                   (name, data_date, data_type, study_time, study_word, checkin_rate,integrity_rate, update_time))
+            resultList.append(CheckinStat(name, study_time, study_word, checkin_rate))
     except:
         print("Error: unable to fetch data")
 
     # 关闭数据库连接
     db.close()
+    resultList.sort( key=lambda obj:obj.checkin_rate, reverse=True)
+    return resultList
 
 def get_last_monday(data_date):
     oneday = datetime.timedelta(days=1)
     while data_date.weekday() != calendar.MONDAY:
         data_date -= oneday
     return data_date
+
+class CheckinStat:
+    def __init__(self, name, study_time, study_word, checkin_rate):
+        self.name = name
+        self.study_time = study_time
+        self.study_word = study_word
+        self.checkin_rate = checkin_rate
+
+
 
 if __name__ == '__main__':
     #get_stat(datetime.date.today(),1)
