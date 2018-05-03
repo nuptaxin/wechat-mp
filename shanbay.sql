@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50721
 File Encoding         : 65001
 
-Date: 2018-05-03 17:53:40
+Date: 2018-05-03 18:13:00
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -41,7 +41,8 @@ CREATE TABLE `checkin_stat` (
   `data_date` datetime NOT NULL,
   `study_time` int(11) NOT NULL,
   `study_word` int(11) NOT NULL,
-  `checkin_ratio` double DEFAULT NULL,
+  `checkin_rate` double DEFAULT NULL COMMENT '打卡率',
+  `integrity_rate` double DEFAULT NULL COMMENT '数据完整率',
   `update_time` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
