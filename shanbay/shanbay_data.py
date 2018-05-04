@@ -61,6 +61,97 @@ def get_last_monday(data_date):
         data_date -= oneday
     return data_date
 
+def get_user_info(wechat_uid):
+    db = pymysql.connect('localhost', 'root', 'Ashin2018', "shanbay", charset='utf8')
+    cursor = db.cursor()
+    sql = '''SELECT
+            u.id,
+            u.uid,
+            u.`name`,
+            u.gender,
+            u.birthday,
+            u.valid,
+            u.update_time,
+            u.wechat_uid
+            FROM
+            user_info AS u
+            WHERE
+            u.wechat_uid = '%s'
+            ''' % (wechat_uid)
+    try:
+        # 执行SQL语句
+        cursor.execute(sql)
+        # 获取所有记录列表
+        results = cursor.fetchall()
+        resultList = []
+        for row in results:
+            id = row[0]
+            uid = row[1]
+            name = row[2]
+            gender = row[3]
+            birthday = row[4]
+            valid = row[5]
+            update_time = row[6]
+            wechat_uid = row[7]
+            # 打印结果
+            resultList.append(UserInfo(id, uid, name, gender, birthday, valid, wechat_uid))
+    except:
+        print("Error: unable to fetch data")
+
+    # 关闭数据库连接
+    db.close()
+    #resultList.sort(key=lambda obj: obj.checkin_rate, reverse=True)
+    return resultList
+
+def bind_user(uid, wechat_uid):
+    resultList = get_user_info(wechat_uid)
+    if len(resultList)>0:
+        for r in resultList:
+            if r.valid==1:
+                return'你已经绑定过扇贝id了，请勿重新绑定'
+    db = pymysql.connect('localhost', 'root', 'Ashin2018', "shanbay", charset='utf8')
+    cursor = db.cursor()
+    sql = """INSERT INTO user_info
+                     (uid, init, valid, update_time, wechat_uid) 
+                     VALUES 
+                     ('%s', '%d', '%d', now(), '%s')""" % (uid, 0, 1, wechat_uid)
+    print(sql)
+    try:
+        cursor.execute(sql)
+        db.commit()
+        reply_content = '恭喜你，绑定成功！'
+    except:
+        db.rollback()
+        reply_content = '由于未知原因绑定失败'
+    db.close()
+    return reply_content
+
+def unbind_user(wechat_uid):
+    resultList = get_user_info(wechat_uid)
+    if len(resultList) == 0:
+        reply_content = '你未绑定过扇贝账号，无需解绑'
+    else:
+        for r in resultList:
+            if r.valid==1:
+                db = db = pymysql.connect('localhost', 'root', 'Ashin2018', "shanbay", charset='utf8')
+                cursor = db.cursor()
+                sql = """UPDATE user_info u set u.valid = 0,u.update_time = now() 
+                          where u.id = '%d'""" % (r.id)
+                print(sql)
+                try:
+                    cursor.execute(sql)
+                    db.commit()
+                    reply_content = '恭喜你，解绑成功！'
+                except:
+                    db.rollback()
+                    reply_content = '由于未知原因解绑失败'
+                db.close()
+                break
+            else:
+                reply_content = '你已解绑过扇贝账号，无需解绑'
+
+    return reply_content
+
 class CheckinStat:
     def __init__(self, name, study_time, study_word, checkin_rate):
         self.name = name
@@ -68,10 +159,21 @@ class CheckinStat:
         self.study_word = study_word
         self.checkin_rate = checkin_rate
 
+class UserInfo:
+    def __init__(self, id, uid, name, gender, birthday, valid, wechat_uid):
+        self.id = id
+        self.uid = uid
+        self.name = name
+        self.gender = gender
+        self.birthday = birthday
+        self.valid = valid
+        self.wechat_uid = wechat_uid
+
 
 
 if __name__ == '__main__':
     #get_stat(datetime.date.today(),1)
     #get_stat(datetime.date.today(), 2)
     #get_stat(datetime.date.today(), 3)
-    get_stat(datetime.date.today(), 5)
+    #get_stat(datetime.date.today(), 5)
+    get_user_info()
