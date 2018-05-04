@@ -11,7 +11,7 @@ import requests
 import json
 import configparser
 import datetime
-from shanbay.shanbay_data import get_stat,get_user_info,bind_user,unbind_user,get_user_stat
+from shanbay import shanbay_data
 urls = (
     '/', 'hello',
     '/weixin', 'WeixinInterface'
@@ -83,7 +83,7 @@ class WeixinInterface:
         elif content == '110':
             reply_content = "帮助-扇贝单词-账号绑定菜单：\r\n111-我的绑定信息\r\n112-绑定新账号\r\n113-解绑账号\r\n119-返回上一页"
         elif content == '111':
-            resultList = get_user_info(from_user)
+            resultList = shanbay_data.get_user_info(from_user)
             reply_content = '扇贝id 扇贝名称 微信id'
             for r in resultList:
                 if r.valid==1:
@@ -91,11 +91,11 @@ class WeixinInterface:
         elif content == '112':
             reply_content = '回复 112#扇贝id 绑定扇贝账号'
         elif content.startswith('112#'):
-            reply_content = bind_user(content[4:],from_user)
+            reply_content = shanbay_data.bind_user(content[4:],from_user)
         elif content == '113':
-            reply_content = unbind_user(from_user)
+            reply_content = shanbay_data.unbind_user(from_user)
         elif content == '120':
-            resultList = get_stat(datetime.date.today())
+            resultList = shanbay_data.get_stat(datetime.date.today())
             reply_content = '扇贝排行榜(月榜)\r\n名次 姓名 学习时长 学习单词数 打卡率'
             count =1
             for r in resultList:
@@ -103,21 +103,21 @@ class WeixinInterface:
                 count +=1
             reply_content += '\r\n\r\n121-日排行榜\r\n122-周排行榜\r\n123-月排行榜\r\n124-季排行榜\r\n125-年排行榜\r\n129-返回上一页'
         elif content == '121':
-            resultList = get_stat(datetime.date.today(),1)
+            resultList = shanbay_data.get_stat(datetime.date.today(),1)
             reply_content = '扇贝排行榜(日榜)\r\n名次 姓名 学习时长 学习单词数 打卡率'
             count =1
             for r in resultList:
                 reply_content += ' '.join(('\r\n',str(count), r.name,str(r.study_time),str(r.study_word),str(r.checkin_rate)))
                 count +=1
         elif content == '122':
-            resultList = get_stat(datetime.date.today(),2)
+            resultList = shanbay_data.get_stat(datetime.date.today(),2)
             reply_content = '扇贝排行榜(周榜)\r\n名次 姓名 学习时长 学习单词数 打卡率'
             count =1
             for r in resultList:
                 reply_content += ' '.join(('\r\n',str(count), r.name,str(r.study_time),str(r.study_word),str(r.checkin_rate)))
                 count +=1
         elif content == '123':
-            resultList = get_stat(datetime.date.today(),3)
+            resultList = shanbay_data.get_stat(datetime.date.today(),3)
             reply_content = '扇贝排行榜(月榜)\r\n名次 姓名 学习时长 学习单词数 打卡率'
             count =1
             for r in resultList:
@@ -126,14 +126,14 @@ class WeixinInterface:
         elif content == '124':
             reply_content = '暂未推出扇贝排行榜季榜功能，敬请期待'
         elif content == '125':
-            resultList = get_stat(datetime.date.today(),5)
+            resultList = shanbay_data.get_stat(datetime.date.today(),5)
             reply_content = '扇贝排行榜(年榜)\r\n名次 姓名 学习时长 学习单词数 打卡率'
             count =1
             for r in resultList:
                 reply_content += ' '.join(('\r\n',str(count), r.name,str(r.study_time),str(r.study_word),str(r.checkin_rate)))
                 count +=1
         elif content == '130':
-            reply_content = get_user_stat(datetime.date.today(),from_user)
+            reply_content = shanbay_data.get_user_stat(datetime.date.today(),from_user)
             reply_content += '\r\n\r\n139-返回上一页'
         elif content == '200':
             reply_content = '天气预报功能开发中，请稍后再试'
