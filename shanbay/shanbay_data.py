@@ -55,6 +55,62 @@ def get_stat(data_date, data_type = 3):
     resultList.sort( key=lambda obj:obj.checkin_rate, reverse=True)
     return resultList
 
+def get_user_stat(data_date, wechat_uid):
+    resultList = get_user_info(wechat_uid)
+    if len(resultList)>0:
+        for r in resultList:
+            if r.valid==1:
+                uid = r.uid
+                break
+            else:
+                uid = None
+        if uid is None:
+            reply_content = '您未关联扇贝用户'
+        else:
+            day_date = data_date.strftime('%Y-%m-%d %H:%M:%S')
+            week_date = get_last_monday(data_date).strftime('%Y-%m-%d %H:%M:%S')
+            month_date = data_date.strftime('%Y-%m') + '-1 00:00:00'
+            year_date = data_date.strftime('%Y') + '-1-1 00:00:00'
+
+            date_map = {1:day_date,2:week_date,3:month_date,4:year_date}
+
+            db = pymysql.connect('localhost', 'root', 'Ashin2018', "shanbay", charset='utf8')
+            reply_content = '您的扇贝统计信息：'
+            for (k,v) in date_map.items():
+                print("key:"+str(k)+"\tvalue:"+str(v))
+                k1 = int(k)
+                v1 = str(v)
+                cursor = db.cursor()
+                sql = '''select st.data_date,st.data_type,st.study_time,st.study_word,st.checkin_rate,st.integrity_rate,st.update_time from checkin_stat st,user_info u
+                                where u.uid = '%s' and u.valid =1 and st.uid = u.uid and st.data_date='%s' and st.data_type = '%d'
+                                ''' % (uid,v1,k1)
+                print(sql)
+                try:
+                    # 执行SQL语句
+                    cursor.execute(sql)
+                    # 获取所有记录列表
+                    results = cursor.fetchall()
+                    for row in results:
+                        data_date = row[0]
+                        data_type = row[1]
+                        study_time = row[2]
+                        study_word = row[3]
+                        checkin_rate = row[4]
+                        integrity_rate = row[5]
+                        update_time = row[6]
+                        # 打印结果
+                        reply_content += '\r\n一个排行榜'+str(k1)
+                        reply_content += ' '.join((str(study_time), str(study_word), str(checkin_rate)))
+                except Exception as e:
+                    print("Error: unable to fetch data")
+                    print(e)
+            # 关闭数据库连接
+            db.close()
+    else:
+        reply_content = '您未关联扇贝用户'
+
+    return reply_content
+
 def get_last_monday(data_date):
     oneday = datetime.timedelta(days=1)
     while data_date.weekday() != calendar.MONDAY:
