@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50721
 File Encoding         : 65001
 
-Date: 2018-05-04 14:04:56
+Date: 2018-05-04 14:18:58
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -21,7 +21,7 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `checkin_record`;
 CREATE TABLE `checkin_record` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
+  `uid` varchar(255) NOT NULL,
   `checkin_time` datetime NOT NULL COMMENT '第一次获取到打卡记录的时间，可能不准确',
   `checkin_note` varchar(255) DEFAULT NULL,
   `study_time` datetime NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE `checkin_record` (
 DROP TABLE IF EXISTS `checkin_stat`;
 CREATE TABLE `checkin_stat` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
+  `uid` varchar(255) NOT NULL,
   `data_type` int(11) NOT NULL COMMENT '1-日；2-周；3-月；4-季；5-年',
   `data_date` datetime NOT NULL,
   `study_time` int(11) NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE `checkin_stat` (
 DROP TABLE IF EXISTS `crawl_record`;
 CREATE TABLE `crawl_record` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
+  `uid` varchar(255) NOT NULL,
   `crawl_time` datetime NOT NULL,
   `crawl_flag` int(11) NOT NULL COMMENT '0-失败；1-成功',
   `crawl_detail` varchar(255) DEFAULT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE `crawl_record` (
 DROP TABLE IF EXISTS `user_info`;
 CREATE TABLE `user_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
+  `uid` varchar(255) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `gender` int(11) DEFAULT '0' COMMENT '0-未选择；1-男；2-女',
   `birthday` datetime DEFAULT NULL,
