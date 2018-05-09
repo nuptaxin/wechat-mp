@@ -208,7 +208,7 @@ def unbind_user(wechat_uid):
 
     return reply_content
 
-def read_db_config(self):
+def read_db_config():
     config = configparser.ConfigParser()
     config.read('config/mysql.properties')
     ip = config .get('shanbay', "ip")

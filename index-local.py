@@ -11,7 +11,13 @@ import requests
 import json
 import configparser
 import datetime
+import logging
 from shanbay import shanbay_data
+
+LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
+DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
+logging.basicConfig(filename='wechat-mp.log', level=logging.DEBUG, format=LOG_FORMAT, datefmt=DATE_FORMAT)
+
 urls = (
     '/', 'hello',
     '/weixin', 'WeixinInterface'
@@ -48,6 +54,7 @@ class WeixinInterface:
         str_xml = web.data() #获得post来的数据
         #web.debug(os.sys.path)
         xml = etree.fromstring(str_xml)#进行XML解析
+        logging.info(str_xml)
         content=xml.find("Content").text#获得用户所输入的内容
         msg_type=xml.find("MsgType").text
         msg_id = xml.find("MsgId").text
