@@ -5,10 +5,10 @@
 
 __author__ = 'Ashin Ren'
 
-import time
 import calendar
 import datetime
 import pymysql
+import configparser
 
 def get_stat(data_date, data_type = 3):
     if data_type == 1:
@@ -22,7 +22,7 @@ def get_stat(data_date, data_type = 3):
 
     print(format_time)
 
-    db = pymysql.connect('localhost', 'root', 'Ashin2018', "shanbay", charset='utf8')
+    db = read_db_config()
     cursor = db.cursor()
     sql = '''select u.name,st.data_date,st.data_type,st.study_time,st.study_word,st.checkin_rate,st.integrity_rate,st.update_time from checkin_stat st, user_info u 
         where u.uid = st.uid and u.valid =1 and st.data_date='%s' and st.data_type = %d''' % (format_time, data_type)
@@ -74,7 +74,7 @@ def get_user_stat(data_date, wechat_uid):
 
             date_map = {1:day_date,2:week_date,3:month_date,4:year_date}
 
-            db = pymysql.connect('localhost', 'root', 'Ashin2018', "shanbay", charset='utf8')
+            db = read_db_config()
             reply_content = '您的扇贝统计信息：'
             for (k,v) in date_map.items():
                 print("key:"+str(k)+"\tvalue:"+str(v))
@@ -118,7 +118,7 @@ def get_last_monday(data_date):
     return data_date
 
 def get_user_info(wechat_uid):
-    db = pymysql.connect('localhost', 'root', 'Ashin2018', "shanbay", charset='utf8')
+    db = read_db_config()
     cursor = db.cursor()
     sql = '''SELECT
             u.id,
@@ -165,7 +165,7 @@ def bind_user(uid, wechat_uid):
         for r in resultList:
             if r.valid==1:
                 return'你已经绑定过扇贝id了，请勿重新绑定'
-    db = pymysql.connect('localhost', 'root', 'Ashin2018', "shanbay", charset='utf8')
+    db = read_db_config()
     cursor = db.cursor()
     sql = """INSERT INTO user_info
                      (uid, init, valid, update_time, wechat_uid) 
@@ -189,7 +189,7 @@ def unbind_user(wechat_uid):
     else:
         for r in resultList:
             if r.valid==1:
-                db = db = pymysql.connect('localhost', 'root', 'Ashin2018', "shanbay", charset='utf8')
+                db = read_db_config()
                 cursor = db.cursor()
                 sql = """UPDATE user_info u set u.valid = 0,u.update_time = now() 
                           where u.id = '%d'""" % (r.id)
@@ -207,6 +207,16 @@ def unbind_user(wechat_uid):
                 reply_content = '你已解绑过扇贝账号，无需解绑'
 
     return reply_content
+
+def read_db_config(self):
+    config = configparser.ConfigParser()
+    config.read('config/mysql.properties')
+    ip = config .get('shanbay', "ip")
+    port = config .getint("shanbay", "port")
+    username = config .get("shanbay", "username")
+    password = config .get("shanbay", "password")
+    database = config .get("shanbay", "database")
+    return pymysql.connect(ip, username, password, database, port, charset='utf8')
 
 class CheckinStat:
     def __init__(self, name, study_time, study_word, checkin_rate):

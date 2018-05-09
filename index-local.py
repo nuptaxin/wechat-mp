@@ -157,12 +157,13 @@ class WeixinInterface:
         config = configparser.ConfigParser()
         config.read('config/mysql.properties')
 
-        ip = config .get('mysql0', "ip")
-        port = config .getint("mysql0", "port")
-        username = config .get("mysql0", "username")
-        password = config .get("mysql0", "password")
+        ip = config .get('wechat', "ip")
+        port = config .getint("wechat", "port")
+        username = config .get("wechat", "username")
+        password = config .get("wechat", "password")
+        database = config .get("wechat", "database")
 
-        return pymysql.connect(ip, username, password, "wechat", charset='utf8')
+        return pymysql.connect(ip, username, password, database, port, charset='utf8')
 
     def none_name_handle(self, name):
         if name is None:
